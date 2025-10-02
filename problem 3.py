@@ -1,92 +1,53 @@
+class Player:
+    def __init__(self, name, card):
+        self.name = name
+        self.card = set(card)
+        self.matches = set()
+        self.prize = 0
 
-import random
+    def check_matches(self, winning_numbers):
+        self.matches = self.card & winning_numbers
+        self.prize = 1_000_000 if len(self.matches) == 6 else (len(self.matches) * 1000)
+
+    def display_result(self):
+        if self.matches:
+            match_str = ", ".join(str(n) for n in sorted(self.matches))
+            print(f"{self.name}'s card {sorted(self.card)} has {len(self.matches)} matched numbers '{match_str}'. You won {self.prize:,} pesos!")
+        else:
+            print(f"{self.name}'s card {sorted(self.card)} has no match! No prize.")
 
 
 class LotteryGame:
+    def __init__(self):
+        self.winning_numbers = set(random.sample(range(1, 61), 6))
+        self.players = []
 
-  def __init__(self):
+    def add_player(self):
+        name = input("Input your name: ")
+        card = set()
+        print("Input your 6 numbers (1-60):")
+        while len(card) < 6:
+            try:
+                num = int(input(f"Number {len(card)+1}: "))
+                if 1 <= num <= 60:
+                    if num not in card:
+                        card.add(num)
+                    else:
+                        print("Number already entered. Try a different number.")
+                else:
+                    print("Number must be between 1 and 60.")
+            except ValueError:
+                print("Invalid input. Enter a number.")
+        self.players.append(Player(name, card))
 
-    self.winning_numbers = set(random.sample(range(1, 61), 6))
-
-    self.player_numbers = set()
-
-    self.matches = set()
-
-    self.prize = 0
-
-
-
-  def input_numbers(self):
-
-    print("Enter your 6 numbers:")
-
-    while len(self.player_numbers) < 6:
-
-      try:
-
-        num = int(input(f"Number {len(self.player_numbers)+1}: "))
-
-        if 1 <= num <= 60:
-
-          self.player_numbers.add(num)
-
-        else:
-
-        print("numbers must be between 1 - 60 only!!")
-
-      except ValueError:
-
-        print("Invalid input. Enter a number.")
+    def play(self):
+        print("\nWinning numbers:", sorted(self.winning_numbers))
+        for player in self.players:
+            player.check_matches(self.winning_numbers)
+            player.display_result()
 
 
-
-  def check_matches(self):
-
-    self.matches = self.player_numbers & self.winning_numbers
-
-    count = len(self.matches)
-
-    if count == 6:
-
-      self.prize = 1_000_000
-    else:
-      self.prize = count * 1000
-
-  def display_results(self):
-
-    print("\nWinning Numbers:", ", ".join(str(n) for n in sorted(self.winning_numbers)))
-
-
-    print("Players Numbers 1:  ", ", ".join(str(n) for n in sorted(self.player_numbers)))
-    print("Players Numbers 2:  ", ", ".join(str(n) for n in sorted(self.player_numbers))))
-    print("Players Numbers 3:  ", ", ".join(str(n) for n in sorted(self.player_numbers))))
-    print("Players Numbers 4:  ", ", ".join(str(n) for n in sorted(self.player_numbers))))
-    print("Players Numbers 5:  ", ", ".join(str(n) for n in sorted(self.player_numbers))))
-    print("Players Numbers 6:  ", ", ".join(str(n) for n in sorted(self.player_numbers))))
-
-
-
-
-    print("Matches:", len(self.matches))
-
-    print("List of the Winners: ")
-
-    print("List of who did not Win.")
-
-    print("Prize: ₱" + format(self.prize, ","))
-
-
-
-  def play(self):
-
-    self.input_numbers()
-
-    self.check_matches()
-
-    self.display_results()
-
-
-# -------- MAIN PROGRAM ----------
+# Run the game
 game = LotteryGame()
-
+game.add_player()
 game.play()
